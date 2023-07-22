@@ -2,13 +2,32 @@
 spring:
   application:
     name: user-service
-  config:
-    import: optional:configserver:http://localhost:8081
+#  config:
+#    import: optional:configserver:http://localhost:8081
   security:
     oauth2:
       resourceserver:
         jwt:
           jwk-set-uri: http://localhost:8080/realms/TradeX/protocol/openid-connect/certs
+
+      client:
+        registration:
+          gateway:
+            provider: keycloak
+            client-id: tradeX-rest-api
+            client-secret: eLtYFtzVBNs8nwhaVJCS0lmZ7hjjqTyi
+            scope: openid
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:9090/user
+
+        provider:
+          keycloak:
+            authorization-uri: http://localhost:8080/realms/TradeX/protocol/openid-connect/auth
+            token-uri: http://localhost:8080/realms/TradeX/protocol/openid-connect/token
+            user-info-uri: http://localhost:8080/realms/TradeX/protocol/openid-connect/userinfo
+            user-name-attribute: sub
+            jwk-set-uri: http://localhost:8080/realms/TradeX/protocol/openid-connect/certs
+
 
 
   datasource:
@@ -23,3 +42,20 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: 'true'
+
+# rabbitMq config
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+# queue names
+rabbitMq:
+  queue:
+    user-queue: user_queue
+  exchange:
+    user-exchange: user_exchange
+
+server:
+  port: 9090
